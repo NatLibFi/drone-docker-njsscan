@@ -1,0 +1,41 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+clone:
+  disable: true
+
+steps:
+- name: generate-tags
+  image: quay.io/natlibfi/drone-gen-tags
+
+- name: clone-upstream
+  image: alpine/git
+  commands:
+    - git clone -b master https://github.com/ajinabraham/njsscan repo
+  
+- name: docker
+  image: plugins/docker
+  settings:
+    context: repo
+    dockerfile: repo/Dockerfile
+    repo: quay.io/natlibfi/njsscan
+    registry: quay.io
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+---
+kind: secret
+name: docker_username
+data: pcAjF1CIENF3ZnH8fWM4C9A08jK0XehI+NkcC12i38u+srfKgLUbS3pwA5a1mOfpSK4=
+---
+kind: secret
+name: docker_password
+data: 7swdKgNIjx4vjEhslyDIxOkBXnF88ssJUyTAfApO5Q+WJD1gCnC2tXblk/RN+wESyEVae8z9wgxjzfPRYdLPM9y0oLL+NCHed/LLSeiCglP2Ii5+Md4y4ICNZwY=
+---
+kind: signature
+hmac: 26709622841392f5cfd6a53124ab0edfa65fe02711902b8ef5b6e0331c0a33e0
+
+...
